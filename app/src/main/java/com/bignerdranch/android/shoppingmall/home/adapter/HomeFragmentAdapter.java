@@ -2,6 +2,7 @@ package com.bignerdranch.android.shoppingmall.home.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,7 +95,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
                     //联网请求图片-Glide
                     Glide.with(mContext).load(Constants.BASE_URL_IMAGE + url).into(view);
-
+                    Log.e("SYS","Add");
                 }
             });
 
