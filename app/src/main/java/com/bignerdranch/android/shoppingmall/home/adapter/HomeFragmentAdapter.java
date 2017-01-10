@@ -8,7 +8,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import com.bignerdranch.android.shoppingmall.R;
 import com.bignerdranch.android.shoppingmall.app.GoodsInfoActivity;
+import com.bignerdranch.android.shoppingmall.home.bean.GoodsBean;
 import com.bignerdranch.android.shoppingmall.home.bean.ResultBeanData;
 import com.bignerdranch.android.shoppingmall.utils.Constants;
 import com.bumptech.glide.Glide;
@@ -29,7 +29,6 @@ import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerClickListener;
 import com.youth.banner.listener.OnLoadImageListener;
 import com.zhy.magicviewpager.transformer.AlphaPageTransformer;
-import com.zhy.magicviewpager.transformer.RotateDownPageTransformer;
 import com.zhy.magicviewpager.transformer.ScaleInTransformer;
 
 import java.text.SimpleDateFormat;
@@ -54,6 +53,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     public static final int RECOMMEND = 4;
     //热门
     public static final int HOT = 5;
+    private static final String GOODS_BEAN = "goodsBean";
 
     private int currentType = BANNER;
 
@@ -102,20 +102,30 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             tv_more_hot = (TextView)itemView.findViewById(R.id.tv_more_hot);
             gv_hot = (GridView)itemView.findViewById(R.id.gv_hot);
             //设置item的监听
-            gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
-                }
-            });
+
         }
 
-        public void setData(List<ResultBeanData.ResultBean.HotInfoBean> hot_info) {
+        public void setData(final List<ResultBeanData.ResultBean.HotInfoBean> hot_info) {
             //1.有数据
             //2.设置GridView的适配器
             adapter = new HotGridViewAdapter(mContext,hot_info);
             gv_hot.setAdapter(adapter);
+
+            gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
+                    //热卖信息类
+                    ResultBeanData.ResultBean.HotInfoBean hotInfoBean = hot_info.get(position);
+                    //商品信息类
+                    GoodsBean goodsBean = new GoodsBean();
+                    goodsBean.setName(hotInfoBean.getName());
+                    goodsBean.setCover_price(hotInfoBean.getCover_price());
+                    goodsBean.setFigure(hotInfoBean.getFigure());
+                    goodsBean.setProduct_id(hotInfoBean.getProduct_id());
+                    startGoodsInfoActivity(goodsBean);
+                }
+            });
         }
     }
     class RecommendViewHolder extends RecyclerView.ViewHolder{
@@ -130,20 +140,32 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             tv_more_recommend = (TextView) itemView.findViewById(R.id.tv_more_recommend);
             gv_recommend = (GridView)itemView.findViewById(R.id.gv_recommend);
 
-            gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(mContext,"Position :"+position,Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
-                }
-            });
+
         }
 
-        public void setData(List<ResultBeanData.ResultBean.RecommendInfoBean> recommend_info) {
+        public void setData(final List<ResultBeanData.ResultBean.RecommendInfoBean> recommend_info) {
             //1.得到数据
             //2.创建适配器
             adapter = new RecommendGridViewAdapter(mContext,recommend_info);
             gv_recommend.setAdapter(adapter);
+            gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext,"Position :"+position,Toast.LENGTH_SHORT).show();
+                    //热卖信息类
+                     ResultBeanData.ResultBean.RecommendInfoBean recommendInfoBean = recommend_info.get(position);
+                    //商品信息类
+                    GoodsBean goodsBean = new GoodsBean();
+                    goodsBean.setName(recommendInfoBean.getName());
+                    goodsBean.setCover_price(recommendInfoBean.getCover_price());
+                    goodsBean.setFigure(recommendInfoBean.getFigure());
+                    goodsBean.setProduct_id(recommendInfoBean.getProduct_id());
+
+                    startGoodsInfoActivity(goodsBean);
+
+                }
+            });
+
         }
     }
     class SeckillViewHolder extends RecyclerView.ViewHolder{
@@ -183,7 +205,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             rv_seckill = (RecyclerView) itemView.findViewById(R.id.rv_seckill);
         }
 
-        public void setData(ResultBeanData.ResultBean.SeckillInfoBean seckill_info) {
+        public void setData(final ResultBeanData.ResultBean.SeckillInfoBean seckill_info) {
             //1.得到数据了
             //2.设置数据: 文本和RecyclerView的数据
             adapter = new SeckillRecyclerViewAdapter(mContext,seckill_info.getList());
@@ -196,6 +218,16 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onItemClick(int position) {
                     Toast.makeText(mContext,"秒杀的位置:"+position,Toast.LENGTH_SHORT).show();
+                    //热卖信息类
+                    ResultBeanData.ResultBean.SeckillInfoBean.ListBean seckillInfoBean = seckill_info.getList().get(position);
+                    //商品信息类
+                    GoodsBean goodsBean = new GoodsBean();
+                    goodsBean.setName(seckillInfoBean.getName());
+                    goodsBean.setCover_price(seckillInfoBean.getCover_price());
+                    goodsBean.setFigure(seckillInfoBean.getFigure());
+                    goodsBean.setProduct_id(seckillInfoBean.getProduct_id());
+
+                    startGoodsInfoActivity(goodsBean);
                 }
             });
 
@@ -299,11 +331,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             this.banner =(Banner) itemView.findViewById(R.id.banner);
         }
 
-        public void setData(List<ResultBeanData.ResultBean.BannerInfoBean> info) {
+        public void setData(List<ResultBeanData.ResultBean.BannerInfoBean> banner_info) {
            //设置Banner的数据
             List<String> imagesUrl = new ArrayList<>();
-            for(int i = 0;i<info.size();i++){
-                String imageUrl = info.get(i).getImage();
+            for(int i = 0;i<banner_info.size();i++){
+                String imageUrl = banner_info.get(i).getImage();
                 imagesUrl.add(imageUrl);
             }
             //设置循环指示点
@@ -325,7 +357,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void OnBannerClick(int position) {
                     Toast.makeText(mContext,"position=="+position,Toast.LENGTH_SHORT).show();
-                    startGoodsInfoActivity();
                 }
             });
 
@@ -334,9 +365,11 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     /**
      * 启动商品信息列表页面
      *
-     * */
-    private void startGoodsInfoActivity() {
+     *
+     * @param goodsBean*/
+    private void startGoodsInfoActivity(GoodsBean goodsBean) {
         Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+        intent.putExtra(GOODS_BEAN,goodsBean);
         mContext.startActivity(intent);
     }
 

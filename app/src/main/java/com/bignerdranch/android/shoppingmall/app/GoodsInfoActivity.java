@@ -13,6 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bignerdranch.android.shoppingmall.R;
+import com.bignerdranch.android.shoppingmall.home.adapter.HomeFragmentAdapter;
+import com.bignerdranch.android.shoppingmall.home.bean.GoodsBean;
 
 
 /**
@@ -34,6 +36,10 @@ public class GoodsInfoActivity extends Activity implements View.OnClickListener 
     private TextView tvGoodInfoCollection;
     private TextView tvGoodInfoCart;
     private Button btnGoodInfoAddcart;
+    private TextView tvMoreShare;
+    private TextView tvMoreSearch;
+    private TextView tvMoreHome;
+    private Button btnMore;
 
     /**
      * Find the Views in the layout<br />
@@ -42,6 +48,10 @@ public class GoodsInfoActivity extends Activity implements View.OnClickListener 
      * (http://www.buzzingandroid.com/tools/android-layout-finder)
      */
     private void findViews() {
+        tvMoreShare =(TextView)findViewById( R.id.tv_more_share );
+        tvMoreSearch = (TextView)findViewById( R.id.tv_more_search );
+        tvMoreHome = (TextView)findViewById( R.id.tv_more_home );
+        btnMore = (Button)findViewById( R.id.btn_more );
         ibGoodInfoBack = (ImageButton)findViewById( R.id.ib_good_info_back );
         ibGoodInfoMore = (ImageButton)findViewById( R.id.ib_good_info_more );
         ivGoodInfoImage = (ImageView)findViewById( R.id.iv_good_info_image );
@@ -63,6 +73,10 @@ public class GoodsInfoActivity extends Activity implements View.OnClickListener 
         tvGoodInfoCallcenter.setOnClickListener( this );
         tvGoodInfoCart.setOnClickListener( this );
         tvGoodInfoCollection.setOnClickListener( this );
+        tvMoreShare.setOnClickListener( this );
+        tvMoreSearch.setOnClickListener( this );
+        tvMoreHome.setOnClickListener( this );
+        btnMore.setOnClickListener( this );
     }
 
     /**
@@ -80,9 +94,28 @@ public class GoodsInfoActivity extends Activity implements View.OnClickListener 
         } else if ( v == ibGoodInfoMore ) {
             // Handle clicks for ibGoodInfoMore
             Toast.makeText(this,"更多:",Toast.LENGTH_SHORT).show();
+
         } else if ( v == btnGoodInfoAddcart ) {
             // Handle clicks for btnGoodInfoAddcart
             Toast.makeText(this,"添加到购物车:",Toast.LENGTH_SHORT).show();
+        }else if ( v == tvGoodInfoCallcenter ) {
+            // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this,"客户中心:",Toast.LENGTH_SHORT).show();
+        }else if ( v == tvGoodInfoCart ) {
+            // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this,"收藏:",Toast.LENGTH_SHORT).show();
+        }else if ( v == tvGoodInfoCollection ) {
+            // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this,"购物车:",Toast.LENGTH_SHORT).show();
+        }else if ( v == tvMoreShare ) {
+            // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this,"更多分享:",Toast.LENGTH_SHORT).show();
+        }else if ( v == tvMoreSearch ) {
+            // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this,"更多搜索:",Toast.LENGTH_SHORT).show();
+        }else if ( v == tvMoreHome ) {
+            // Handle clicks for btnGoodInfoAddcart
+            Toast.makeText(this,"更多主页:",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -92,5 +125,11 @@ public class GoodsInfoActivity extends Activity implements View.OnClickListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_goods_info);
         findViews();
+
+        //接收数据
+        GoodsBean goodsBean = (GoodsBean)getIntent().getSerializableExtra("goodsBean");
+        if(goodsBean != null){
+            Toast.makeText(this,"goodsBean=="+goodsBean.toString(),Toast.LENGTH_SHORT).show();
+        }
     }
 }
