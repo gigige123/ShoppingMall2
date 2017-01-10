@@ -1,6 +1,7 @@
 package com.bignerdranch.android.shoppingmall.home.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bignerdranch.android.shoppingmall.R;
+import com.bignerdranch.android.shoppingmall.app.GoodsInfoActivity;
 import com.bignerdranch.android.shoppingmall.home.bean.ResultBeanData;
 import com.bignerdranch.android.shoppingmall.utils.Constants;
 import com.bumptech.glide.Glide;
@@ -83,15 +85,65 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
            return new SeckillViewHolder(mContext,mLayoutInflater.inflate(R.layout.seckill_item,null));
        }else if(viewType == RECOMMEND){
            return new RecommendViewHolder(mContext,mLayoutInflater.inflate(R.layout.recommend_item,null));
+       }else if(viewType == HOT){
+           return new HotViewHolder(mContext,mLayoutInflater.inflate(R.layout.hot_item,null));
        }
         return null;
     }
 
+    class HotViewHolder extends RecyclerView.ViewHolder{
+        private Context mContext;
+        private TextView tv_more_hot;
+        private GridView gv_hot;
+        private HotGridViewAdapter adapter;
+        public HotViewHolder(final Context mContext,View itemView){
+            super(itemView);
+            this.mContext = mContext;
+            tv_more_hot = (TextView)itemView.findViewById(R.id.tv_more_hot);
+            gv_hot = (GridView)itemView.findViewById(R.id.gv_hot);
+            //设置item的监听
+            gv_hot.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext,"position:"+position,Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
+                }
+            });
+        }
 
+        public void setData(List<ResultBeanData.ResultBean.HotInfoBean> hot_info) {
+            //1.有数据
+            //2.设置GridView的适配器
+            adapter = new HotGridViewAdapter(mContext,hot_info);
+            gv_hot.setAdapter(adapter);
+        }
+    }
     class RecommendViewHolder extends RecyclerView.ViewHolder{
         private Context mContext;
+        private TextView tv_more_recommend;
+        private GridView gv_recommend;
+        private RecommendGridViewAdapter adapter;
+
         public RecommendViewHolder(final Context mContext,View itemView){
+            super(itemView);
             this.mContext = mContext;
+            tv_more_recommend = (TextView) itemView.findViewById(R.id.tv_more_recommend);
+            gv_recommend = (GridView)itemView.findViewById(R.id.gv_recommend);
+
+            gv_recommend.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(mContext,"Position :"+position,Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
+                }
+            });
+        }
+
+        public void setData(List<ResultBeanData.ResultBean.RecommendInfoBean> recommend_info) {
+            //1.得到数据
+            //2.创建适配器
+            adapter = new RecommendGridViewAdapter(mContext,recommend_info);
+            gv_recommend.setAdapter(adapter);
         }
     }
     class SeckillViewHolder extends RecyclerView.ViewHolder{
@@ -264,7 +316,7 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
 
                     //联网请求图片-Glide
                     Glide.with(mContext).load(Constants.BASE_URL_IMAGE + url).into(view);
-                    Log.e("SYS","Add");
+
                 }
             });
 
@@ -273,11 +325,21 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
                 @Override
                 public void OnBannerClick(int position) {
                     Toast.makeText(mContext,"position=="+position,Toast.LENGTH_SHORT).show();
+                    startGoodsInfoActivity();
                 }
             });
 
         }
     }
+    /**
+     * 启动商品信息列表页面
+     *
+     * */
+    private void startGoodsInfoActivity() {
+        Intent intent = new Intent(mContext, GoodsInfoActivity.class);
+        mContext.startActivity(intent);
+    }
+
     /**
      * 得到类型
      * */
@@ -323,7 +385,13 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
             }else if(getItemViewType(position) == SECKILL){
                 SeckillViewHolder seckillViewHolder = (SeckillViewHolder) holder;
                 seckillViewHolder.setData(resultBean.getSeckill_info());
-            }
+            }else if(getItemViewType(position) == RECOMMEND){
+                RecommendViewHolder recommendViewHolder = (RecommendViewHolder) holder;
+                recommendViewHolder.setData(resultBean.getRecommend_info());
+            }else if(getItemViewType(position) == HOT){
+                HotViewHolder hotViewHolder = (HotViewHolder) holder;
+                hotViewHolder.setData(resultBean.getHot_info());
+    }
     }
 
     /**
@@ -333,6 +401,6 @@ public class HomeFragmentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         //开发过程中从1到6
-        return 4;
+        return 6;
     }
 }

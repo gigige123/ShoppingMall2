@@ -15,6 +15,7 @@ import com.bignerdranch.android.shoppingmall.base.BaseFragment;
 import com.bignerdranch.android.shoppingmall.home.adapter.HomeFragmentAdapter;
 import com.bignerdranch.android.shoppingmall.home.bean.ResultBeanData;
 import com.bignerdranch.android.shoppingmall.utils.Constants;
+import com.orhanobut.logger.Logger;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.builder.GetBuilder;
 import com.zhy.http.okhttp.builder.OkHttpRequestBuilder;
@@ -125,7 +126,7 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         public String parseNetworkResponse(Response response, int id) throws IOException {
-            Log.e(TAG,"parseNetworkResponse==  " +  new Integer(id).toString()+  "   response : "+response.toString());
+
             return super.parseNetworkResponse(response, id);
 
         }
@@ -143,8 +144,25 @@ public class HomeFragment extends BaseFragment {
             //有数据，设置适配器
             adapter = new HomeFragmentAdapter(mContext,resultBean);
             rvHome.setAdapter(adapter);
+            //设置一键回页首的监听
+            GridLayoutManager manager = new GridLayoutManager(mContext,1);
+            //设置跨度大小的监听
+            manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    if(position <= 3){
+                        //隐藏
+                        ib_top.setVisibility(View.GONE);
+                    }else{
+                        //显示
+                        ib_top.setVisibility(View.VISIBLE);
+                    }
+                    //返回跨度的大小
+                    return 1;
+                }
+            });
             //设置布局管理者
-            rvHome.setLayoutManager(new GridLayoutManager(mContext,1));
+            rvHome.setLayoutManager(manager);
         }else{
 
         }
